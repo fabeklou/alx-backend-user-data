@@ -116,8 +116,10 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         'database': DATABASE
     }
 
-    connection = mysql.connector.connect(**config)
-    return connection
+    try:
+        return mysql.connector.connect(**config)
+    except Exception:
+        return None
 
 
 def main() -> None:
