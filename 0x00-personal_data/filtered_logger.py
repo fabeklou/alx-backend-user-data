@@ -109,15 +109,11 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     HOST: str = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
     DATABASE: str = os.environ.get('PERSONAL_DATA_DB_NAME')
 
-    config = {
-        'user': USERNAME,
-        'password': PASSWORD,
-        'host': HOST,
-        'database': DATABASE
-    }
-
     try:
-        return mysql.connector.connect(**config)
+        return mysql.connector.connect(host=HOST,
+                                       database=DATABASE,
+                                       user=USERNAME,
+                                       password=PASSWORD)
     except Exception:
         return None
 
