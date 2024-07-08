@@ -31,3 +31,10 @@ def unauthenticated_user() -> str:
     """ Unauthorized unauthenticated user
     """
     abort(401)
+
+
+@app_views.route('/forbidden', strict_slashes=False)
+def forbidden_request() -> str:
+    """ Forbidden Request
+    """
+    abort(403)
