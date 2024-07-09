@@ -8,6 +8,7 @@ It handles basic authentication for the API.
 import base64
 import binascii
 from api.v1.auth.auth import Auth
+from typing import Tuple
 
 
 class BasicAuth(Auth):
@@ -60,3 +61,27 @@ class BasicAuth(Auth):
             return decoded_base64.decode('utf-8')
         except binascii.Error:
             return None
+
+    def extract_user_credentials(
+            self,
+            decoded_base64_authorization_header: str) -> Tuple[str, str]:
+        """
+        Extracts the username and password from a decoded
+        base64 authorization header.
+
+        Args:
+            decoded_base64_authorization_header (str): The decoded
+                base64 authorization header.
+
+        Returns:
+            Tuple[str, str]: A tuple containing the username and password
+                extracted from the authorization header.
+                If the authorization header is not in the correct format,
+                returns (None, None).
+        """
+        separator = ':'
+        if not isinstance(decoded_base64_authorization_header, str):
+            return None, None
+        if separator not in decoded_base64_authorization_header:
+            return None, None
+        return tuple(decoded_base64_authorization_header.split(separator))
