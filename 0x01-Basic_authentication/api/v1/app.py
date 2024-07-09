@@ -25,6 +25,18 @@ if AUTH_TYPE == 'auth':
 
 @app.before_request
 def before_request():
+    """
+    Performs actions before each request is processed.
+
+    This function checks if the request path requires authentication
+    and authorization.
+    If authentication is required, it checks if the request
+    has a valid authorization header.
+    If authorization is required, it checks if the current user has
+    the necessary permissions.
+    If any of the checks fail, it aborts the request with
+    the appropriate HTTP status code.
+    """
     paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
     if auth is None:
         return
