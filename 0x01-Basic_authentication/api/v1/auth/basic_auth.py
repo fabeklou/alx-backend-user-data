@@ -86,7 +86,10 @@ class BasicAuth(Auth):
             return None, None
         if separator not in decoded_base64_authorization_header:
             return None, None
-        return tuple(decoded_base64_authorization_header.split(separator))
+
+        decoded_base64 = decoded_base64_authorization_header
+        index = decoded_base64.find(separator)
+        return decoded_base64[:index], decoded_base64[index + 1:]
 
     def user_object_from_credentials(self,
                                      user_email: str,
