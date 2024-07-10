@@ -6,6 +6,7 @@ This module provides authentication functionality for the API.
 
 from typing import List, TypeVar
 from flask import request
+import re
 
 
 class Auth:
@@ -35,9 +36,16 @@ class Auth:
         Returns:
             bool: True if authentication is required, False otherwise.
         """
-        if path is not None and len(path) > 0 and path[-1] != "/":
+        if path is None or not excluded_paths:
+            return True
+
+        if len(path) > 0 and path[-1] != "/":
             path = path + '/'
-        return path is None or not excluded_paths or path not in excluded_paths
+
+        for excluded_path in excluded_paths:
+            if re.match(excluded_path, path):
+                return False
+        return True
 
     def authorization_header(self, _request=None) -> str:
         """
