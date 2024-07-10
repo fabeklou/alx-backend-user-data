@@ -11,6 +11,7 @@ from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
+from api.v1.auth.session_auth import SessionAuth
 
 
 app = Flask(__name__)
@@ -19,7 +20,9 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 auth = None
 AUTH_TYPE = os.environ.get('AUTH_TYPE', None)
-auth_choices = {'auth': Auth, 'basic_auth': BasicAuth}
+auth_choices = {'auth': Auth,
+                'basic_auth': BasicAuth,
+                'session_auth': SessionAuth}
 
 if AUTH_TYPE in auth_choices:
     auth = auth_choices[AUTH_TYPE]()
@@ -39,14 +42,16 @@ def before_request():
     If any of the checks fail, it aborts the request with
     the appropriate HTTP status code.
     """
-    paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    paths = ['/api/v1/status/', '/api/v1/unauthorized/',
+             '/api/v1/forbidden/', '/api/v1/auth_session/login/']
     if auth is None:
         return
 
     request.current_user = auth.current_user(request)
 
     if auth.require_auth(request.path, paths):
-        if auth.authorization_header(request) is None:
+        if auth.authorization_header(request) is None and\
+                auth.session_cookie(request) is None:
             abort(401)
         if auth.current_user(request) is None:
             abort(403)
