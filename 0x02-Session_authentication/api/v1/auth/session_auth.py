@@ -7,6 +7,7 @@ for handling session-based authentication.
 
 from api.v1.auth.auth import Auth
 from uuid import uuid4
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -62,3 +63,18 @@ class SessionAuth(Auth):
             return None
 
         return self.user_id_by_session_id.get(session_id, None)
+
+    def current_user(self, request=None):
+        """
+        Retrieves the current user based on the session cookie.
+
+        Args:
+            request (Request): The request object (default is None).
+
+        Returns:
+            User: The User object associated with the session cookie.
+
+        """
+        s_cookie = self.session_cookie(request)
+        user_id = self.user_id_for_session_id(s_cookie)
+        return User.get(user_id)
