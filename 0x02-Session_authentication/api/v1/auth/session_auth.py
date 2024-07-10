@@ -23,6 +23,8 @@ class SessionAuth(Auth):
     Methods:
         create_session(user_id: str = None) -> str:
             Creates a session for the given user ID.
+        user_id_for_session_id(session_id: str = None) -> str:
+            Retrieves the user ID associated with a given session ID.
     """
 
     user_id_by_session_id = {}
@@ -44,3 +46,19 @@ class SessionAuth(Auth):
         self.user_id_by_session_id[session_id] = user_id
 
         return session_id
+
+    def user_id_for_session_id(self, session_id: str = None) -> str:
+        """
+        Retrieves the user ID associated with a given session ID.
+
+        Args:
+            session_id (str): The session ID to retrieve the user ID for.
+
+        Returns:
+            str: The user ID associated with the given session ID.
+
+        """
+        if not isinstance(session_id, str):
+            return None
+
+        return self.user_id_by_session_id.get(session_id, None)
