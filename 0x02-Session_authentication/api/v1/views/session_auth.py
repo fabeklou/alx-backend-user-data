@@ -15,7 +15,7 @@ The module also defines the following functions:
 
 from models.user import User
 from api.v1.views import app_views
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, abort
 import os
 
 
@@ -67,3 +67,30 @@ def authenticate_user() -> str:
     response.set_cookie(cookie_name, session_id)
 
     return response
+
+
+@app_views.route('/auth_session/logout',
+                 methods=["DELETE"], strict_slashes=False)
+def destroy_session() -> str:
+    """
+    Destroy the current session.
+
+    This function destroys the current session by calling
+    the `destroy_session` method from the `auth` module.
+    If the session was successfully destroyed, it returns an
+    empty JSON response with a status code of 200.
+    If the session was not destroyed, it raises a 404 error.
+
+    Returns:
+        A JSON response with an empty body and a status code of 200.
+
+    Raises:
+        404: If the session was not destroyed.
+    """
+    from api.v1.app import auth
+    was_destroyed = auth.destroy_session(request)
+
+    if not was_destroyed:
+        abort(404)
+
+    return jsonify({}), 200
