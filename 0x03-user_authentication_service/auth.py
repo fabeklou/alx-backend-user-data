@@ -58,3 +58,24 @@ class Auth:
             return user
         else:
             raise ValueError("User {} already exists".format(email))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        Check if the provided email and password combination is valid.
+
+        Args:
+            email (str): The email of the user.
+            password (str): The password of the user.
+
+        Returns:
+            bool: True if the email and password combination is valid,
+                False otherwise.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return False
+        else:
+            return bcrypt.checkpw(
+                bytes(password, 'utf-8'),
+                user.hashed_password)
