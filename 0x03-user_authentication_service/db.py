@@ -84,11 +84,11 @@ class DB:
         """
         for arg in kwargs:
             if arg not in users_attributes:
-                raise(InvalidRequestError)
+                raise InvalidRequestError
 
         user = self._session.query(User).filter_by(**kwargs).first()
         if user is None:
-            raise(NoResultFound)
+            raise NoResultFound
 
         return user
 
@@ -106,7 +106,7 @@ class DB:
         """
         for arg in kwargs:
             if arg not in users_attributes:
-                raise(ValueError)
+                raise ValueError
 
         try:
             user = self.find_user_by(id=user_id)
