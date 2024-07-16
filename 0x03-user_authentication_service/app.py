@@ -12,7 +12,7 @@ email and password.
 The module also imports the Auth class from the auth module.
 """
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 from auth import Auth
 
 app = Flask(__name__)
@@ -60,6 +60,38 @@ def users() -> str:
         return jsonify({'message': 'email already registered'}), 400
     else:
         return jsonify({'email': email, 'message': 'user created'})
+
+
+@app.route('/sessions', methods=['POST'])
+def login():
+    """
+    Logs in a user by validating their email and password.
+
+    Returns:
+        If the login is successful, returns a response object with
+            a JSON payload containing the user's email and
+            a success message.
+        If the login fails, returns an HTTP 401 Unauthorized error.
+
+    Raises:
+        HTTP 400 Bad Request error if the email or password is missing.
+    """
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    if email is None or password is None:
+        abort(400)
+
+    if AUTH.valid_login(email, password):
+        session_id = AUTH.create_session(email)
+
+        response = make_response(
+            jsonify({"email": email, "message": "logged in"}))
+        response.set_cookie('session_id', value=session_id)
+
+        return response
+
+    abort(401)
 
 
 if __name__ == "__main__":
