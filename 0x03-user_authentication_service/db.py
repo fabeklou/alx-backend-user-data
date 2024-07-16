@@ -68,7 +68,7 @@ class DB:
         self._session.commit()
         return user
 
-    def find_user_by(self, **kwargs: Dict) -> Union[User, None]:
+    def find_user_by(self, **kwargs) -> User:
         """
         Find a user in the database based on the provided attributes.
 
@@ -92,7 +92,7 @@ class DB:
 
         return user
 
-    def update_user(self, user_id: int, **kwargs: Dict) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
         Update the information of a user in the database.
 
