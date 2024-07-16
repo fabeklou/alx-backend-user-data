@@ -104,14 +104,14 @@ def logout():
         A redirect response to the specified URL.
 
     Raises:
-        400 Bad Request: If the session ID is not found in the request cookies.
-        403 Forbidden: If the user associated with the session ID is not found.
+        403 Forbidden: If the user associated with
+            the session ID is not found.
     """
 
     session_id = request.cookies.get('session_id')
 
     if session_id is None:
-        abort(400)
+        abort(403)
 
     user = AUTH.get_user_from_session_id(session_id)
 
