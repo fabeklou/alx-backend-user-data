@@ -12,7 +12,7 @@ email and password.
 The module also imports the Auth class from the auth module.
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from auth import Auth
 
 
@@ -23,7 +23,7 @@ app.url_map.strict_slashes = False
 
 
 @app.route('/', methods=['GET'])
-def woezon():
+def woezon() -> str:
     """
     This function returns a JSON response with a welcome message.
 
@@ -34,7 +34,7 @@ def woezon():
 
 
 @app.route('/users', methods=['POST'])
-def users():
+def users() -> str:
     """
     Register a new user.
 
@@ -52,6 +52,9 @@ def users():
     """
     email = request.form.get('email')
     password = request.form.get('password')
+
+    if email is None or password is None:
+        abort(400)
 
     try:
         AUTH.register_user(email, password)
