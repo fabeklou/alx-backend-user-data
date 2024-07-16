@@ -13,6 +13,7 @@ The module also imports the Auth class from the auth module.
 """
 
 from flask import Flask, jsonify, request, abort, make_response
+from flask import redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -92,6 +93,33 @@ def login():
         return response
 
     abort(401)
+
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """
+    Logs out the user by destroying the session.
+
+    Returns:
+        A redirect response to the specified URL.
+
+    Raises:
+        400 Bad Request: If the session ID is not found in the request cookies.
+        403 Forbidden: If the user associated with the session ID is not found.
+    """
+
+    session_id = request.cookies.get('session_id')
+
+    if session_id is None:
+        abort(400)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user is None:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+    return redirect(url_for('woezon'))
 
 
 if __name__ == "__main__":
