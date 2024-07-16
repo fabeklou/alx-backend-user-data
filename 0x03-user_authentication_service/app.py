@@ -15,11 +15,9 @@ The module also imports the Auth class from the auth module.
 from flask import Flask, jsonify, request, abort
 from auth import Auth
 
-
-AUTH = Auth()
-
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+AUTH = Auth()
 
 
 @app.route('/', methods=['GET'])
@@ -61,7 +59,7 @@ def users() -> str:
     except ValueError:
         return jsonify({'message': 'email already registered'}), 400
     else:
-        return jsonify({'email': email, 'message': 'user created'}), 201
+        return jsonify({'email': email, 'message': 'user created'})
 
 
 if __name__ == "__main__":
