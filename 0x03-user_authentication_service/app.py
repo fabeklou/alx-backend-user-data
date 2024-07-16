@@ -122,5 +122,32 @@ def logout():
     return redirect(url_for('woezon'))
 
 
+@app.route('/profile', methods=['GET'])
+def profile():
+    """
+    Retrieves the user profile based on the session ID
+    stored in the cookies.
+
+    Returns:
+        A JSON response containing the user's email and a status code of
+            200 if the session ID is valid and the user exists.
+
+    Raises:
+        403: If the session ID is missing or invalid,
+            or if the user does not exist.
+    """
+    session_id = request.cookies.get('session_id')
+
+    if session_id is None:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user is None:
+        abort(403)
+
+    return jsonify({'email': user.email}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
