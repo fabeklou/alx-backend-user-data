@@ -167,3 +167,28 @@ class Auth:
             reset_token_uuid = _generate_uuid()
             self._db.update_user(user.id, reset_token=reset_token_uuid)
             return reset_token_uuid
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """
+        Updates the password for a user given a reset token.
+
+        Args:
+            reset_token (str): The reset token associated with the user.
+            password (str): The new password to be set for the user.
+
+        Raises:
+            ValueError: If no user is found with the given reset token.
+
+        Returns:
+            None
+        """
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+        except NoResultFound:
+            raise ValueError
+        else:
+            password_hashed = _hash_password(password)
+            self._db.update_user(
+                user.id,
+                password=password_hashed,
+                reset_token=None)
